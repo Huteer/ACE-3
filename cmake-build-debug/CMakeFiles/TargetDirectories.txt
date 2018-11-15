@@ -1,0 +1,3 @@
+/home/rositsa/Documents/CS210-Practicals/ACE3/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/rositsa/Documents/CS210-Practicals/ACE3/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/rositsa/Documents/CS210-Practicals/ACE3/cmake-build-debug/CMakeFiles/ACE3.dir

@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/rositsa/Documents/CS210-Practicals/ACE3/helpfunctions.h
+structreg.h
+/home/rositsa/Documents/CS210-Practicals/ACE3/structreg.h
+
+/home/rositsa/Documents/CS210-Practicals/ACE3/instructions.c
+stdlib.h
+-
+instructions.h
+/home/rositsa/Documents/CS210-Practicals/ACE3/instructions.h
+helpfunctions.h
+/home/rositsa/Documents/CS210-Practicals/ACE3/helpfunctions.h
+
+/home/rositsa/Documents/CS210-Practicals/ACE3/instructions.h
+structreg.h
+/home/rositsa/Documents/CS210-Practicals/ACE3/structreg.h
+
+/home/rositsa/Documents/CS210-Practicals/ACE3/structreg.h
+
