@@ -6,23 +6,23 @@
 #include "instructions.h"
 #include "helpfunctions.h"
 
-void halt(struct reg *cpu, char *array) {
+void halt() {
 
     system(EXIT_SUCCESS);
 
 }
 
-void load(struct reg *cpu, char* array) {
+void load(registers *r, char* array) {
 
-    cpu->mar = binToDec12(array, cpu);
-    cpu->mbr = binToDec16(array, cpu);
-    cpu->ac = cpu->mbr;
+    r->mar = binToDec12(array, r);
+    r->mbr = binToDec16(array, r);
+    r->ac = r->mbr;
 }
 
-void store(struct reg* cpu, char* array){
+void store(registers *r, char* array){
 
-    cpu->mar = binToDec12(array, cpu);
-    cpu->mbr = cpu->ac;
-    *(array + cpu->mar*16) = decToBin(cpu->mbr);
+    r->mar = binToDec12(array, r);
+    r->mbr = r->ac;
+    *(array + r->mar*16) = decToBin(r->mbr);
 }
 
