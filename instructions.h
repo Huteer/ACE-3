@@ -7,17 +7,17 @@
 
 #include "structreg.h"
 
-void halt(struct reg* cpu, char* array);
-void load(struct reg* cpu, char* array);
-void store(struct reg* cpu, char* array);
-void add(struct reg* cpu, char* array);
-void subt(struct reg* cpu, char* array);
-void input(struct reg* cpu);
-void output(struct reg* cpu);
-void skipcond(struct reg* cpu, char* array);
-void jump(struct reg* cpu, char* array);
-void ldc(struct reg* cpu, char* array);
-void shiftr(struct reg* cpu, char* array);
-void shiftl(struct reg* cpu, char* array);
+void halt();
+void load(registers *r, char* array);
+void store(registers *r, char* array);
+void add(registers *r, char* array);
+void subt(registers *r, char* array);
+void input(registers *r);
+void output(registers *r);
+void skipcond(registers *r, char* array);
+void jump(registers *r, char* array);
+void ldc(registers *r, char* array);
+void shiftr(registers *r, char* array);
+void shiftl(registers *r, char* array);
 
 #endif //ACE3_INSTRUCTIONS_H
