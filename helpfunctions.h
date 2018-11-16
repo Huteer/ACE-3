@@ -7,8 +7,8 @@
 
 #include "structreg.h"
 
-int binToDec12(char* array, struct reg* cpu);
-int binToDec16(char* array, struct reg* cpu);
+int binToDec12(char* array, registers *r);
+int binToDec16(char* array, registers *r);
 char* decToBin(int x);
 
 
