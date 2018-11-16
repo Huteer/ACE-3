@@ -24,9 +24,7 @@ int main(int argc, char *argv[])
 {
 
     char* memoryptr = memory;
-
-    struct reg* cpu = malloc(sizeof(struct reg));
-    memset(cpu, 0, sizeof(struct reg));
+    registers cpu = {0, 0, 0, 0, 0};
 
     if (argc < 2)
     {
@@ -55,14 +53,14 @@ int main(int argc, char *argv[])
 
     display_memory();
 
-    printf("%d\n", binToDec12(memoryptr, cpu));
-    printf("%d\n", binToDec16(memoryptr, cpu));
-    printf("%s\n", decToBin(binToDec12(memoryptr, cpu)));
+    printf("%d\n", binToDec12(memoryptr, &cpu));
+    printf("%d\n", binToDec16(memoryptr, &cpu));
+    printf("%s\n", decToBin(binToDec12(memoryptr, &cpu)));
 
-    printf("%d\n", cpu->pc);
-    printf("%d\n", cpu->ac);
-    load(cpu, memoryptr);
-    printf("%d", cpu->ac);
+    printf("%d\n", cpu.pc);
+    printf("%d\n", cpu.ac);
+    load(&cpu, memoryptr);
+    printf("%d", cpu.ac);
     //store(cpu, memoryptr);
 
     display_memory();
