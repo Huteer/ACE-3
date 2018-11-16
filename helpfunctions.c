@@ -5,11 +5,11 @@
 #include "helpfunctions.h"
 
 
-int binToDec12(char* array, struct reg* cpu){
+int binToDec12(char* array, registers *r){
 
     int count=0;
     int total=0;
-    char* start = array + cpu->pc*16 + 4;
+    char* start = array + r->pc*16 + 4;
 
     while(count < 12){
         total *= 2;
@@ -21,12 +21,12 @@ int binToDec12(char* array, struct reg* cpu){
     return total;
 }
 
-int binToDec16(char* array, struct reg* cpu){
+int binToDec16(char* array, registers *r){
 
     int count=0;
     int total=0;
-    char* first = array + cpu->mar*16;
-    char* start = array + cpu->mar*16;
+    char* first = array + r->mar*16;
+    char* start = array + r->mar*16;
 
     while(count < 16){
         total *= 2;
