@@ -5,12 +5,12 @@
 #ifndef ACE3_STRUCTREG_H
 #define ACE3_STRUCTREG_H
 
-struct reg{
+typedef struct reg{
     int ac;
     int ir;
     int mbr;
     int pc;
     int mar;
-};
+} registers;
 
 #endif //ACE3_STRUCTREG_H
