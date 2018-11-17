@@ -1,34 +1,27 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <memory.h>
+#include "main.h"
 #include "instructions.h"
 #include "structreg.h"
 #include "helpfunctions.h"
 
-#define WORD_SIZE 16
-#define MEM_SIZE 4096
-#define HALT "0000"
-
-void read_file(char *filename);
-void read_console();
-void load_defaults();
-int validate_binary(char *bin);
-void clear_memory();
-void display_memory();
-
-char memory[MEM_SIZE][WORD_SIZE + 1];
-
 int main(int argc, char *argv[])
 {
 
-    char* memoryptr = memory;
+    char* memoryptr = *memory;
     registers cpu = {0, 0, 0, 0, 0};
 
     if (argc < 2)
     {
-        printf("Missing argument(s)...\nTo load a program from a file use command '-f' followed by the filename.\nTo load a program from the console use command '-c'\nTo load the default program use command '-d'.\n");
+		printf("Missing argument(s)...\n");
+		printf("To load a program from a file use command '-f' followed by the filename.\n");
+		printf("To load a program from the console use command '-c'\n");
+		printf("To load the default program use command '-d'. \n");
         return 1;
     }
 
@@ -60,7 +53,7 @@ int main(int argc, char *argv[])
     printf("%d\n", cpu.pc);
     printf("%d\n", cpu.ac);
     load(&cpu, memoryptr);
-    printf("%d", cpu.ac);
+    printf("%d\n", cpu.ac);
     //store(cpu, memoryptr);
 
     display_memory();
@@ -73,56 +66,56 @@ int main(int argc, char *argv[])
 */
 void read_file(char *filename)
 {
-    FILE *fp;
-    char line[17], op[5];
-    int isData = 0, memIndex = 0;
+	FILE *fp;
+	char line[17];
+	char* op;
+	int isData = 0, memIndex = 0, opInt = 0;
 
-    clear_memory();
-    fp = fopen(filename, "r");
+	clear_memory();
+	fp = fopen(filename, "r");
 
-    if (fp == NULL)
-    {
-        printf("Failed to open file: %s\nProgram terminating...", filename);
-        exit(EXIT_FAILURE);
-        return;
-    }
-    else
-    {
-        printf("Opening '%s'...\n", filename);
+	if (fp == NULL)
+	{
+		printf("Failed to open file: %s\nProgram terminating...", filename);
+		exit(EXIT_FAILURE);
+		return;
+	}
+	else
+	{
+		printf("Opening '%s'...\n", filename);
 
-        while (fgets(line, sizeof(line), fp)) // Reads each line in file
-        {
-            if (line[strlen(line) - 1] == '\n') // Removes new line character
-                line[strlen(line) - 1] = '\0';
+		while (fgets(line, sizeof(line), fp)) // Reads each line in file
+		{
+			if (line[strlen(line) - 1] == '\n') // Removes new line character
+				line[strlen(line) - 1] = '\0';
 
-            fseek(fp, 2, SEEK_CUR); // Ignores UTF-8 hidden characters
+			fseek(fp, 2, SEEK_CUR); // Ignores UTF-8 hidden characters
 
-            if (!validate_binary(line)) // Make sure line is a valid 16 bit binary string
-            {
-                printf("Line could not be read into 0x%04x, moving on...\n", memIndex);
-                continue;
-            }
+			if (!validate_binary(line)) // Make sure line is a valid 16 bit binary string
+			{
+				printf("Line could not be read into 0x%04x, moving on...\n", memIndex);
+				continue;
+			}
 
-            if (!isData)
-            {
-                memcpy(op, &line, 4); // Gets opcode from line
-                op[4] = '\0';
+			if (!isData)
+			{
+				op = get_opcode(line);
+				opInt = atoi(op);
 
-                if (!strcmp(op, HALT)) // Checks for HALT opcode. When received, loads remaining lines as data
-                {
-                    strcpy(memory[memIndex], line); // Stores HALT as instruction, required for running program
-                    memIndex = MEM_SIZE / 2; // Data stored halfway up memory (ie. 2048+)
-                    isData = 1;
-                    continue;
-                }
-            }
-
-            strcpy(memory[memIndex], line); // Stores line in memory
-            memIndex++;
-        }
-        fclose(fp);
-        printf("File loaded successfully!\n");
-    }
+				if (opInt == opcodes->bin) // Checks for HALT opcode. When received, loads remaining lines as data (opcodes + 0 == HALT)
+				{
+					strcpy(memory[memIndex], line); // Stores HALT as instruction, required for running program
+					memIndex = MEM_SIZE / 2; // Data stored halfway up memory (ie. 2048+)
+					isData = 1;
+					continue;
+				}
+			}
+			strcpy(memory[memIndex], line); // Stores line in memory
+			memIndex++;
+		}
+		printf("File loaded successfully!\n");
+		fclose(fp);
+	}
 }
 
 /*
@@ -130,63 +123,91 @@ void read_file(char *filename)
 */
 void read_console()
 {
-    char line[18], op[5];
-    int memIndex = 0;
+	char line[18];
+	char* op = "\0";
+	int stop = 0, memIndex = 0, opInt = 1;
 
-    printf("Please enter the program instructions as 16 bit binary strings:\n\n");
+	clear_memory();
 
-    while (strcmp(op, HALT)) // Stores strings as instuctions until HALT opcode is received
-    {
-        fgets(line, sizeof(line), stdin);
+	printf("Please enter the program instructions as 16 bit binary strings:\n\n");
 
-        if (line[strlen(line) - 1] == '\n') // Removes new line character
-            line[strlen(line) - 1] = '\0';
+	while (opInt != opcodes->bin) // Stores strings as instuctions until HALT opcode is received (opcodes + 0 == HALT)
+	{
+		fgets(line, sizeof(line), stdin);
 
-        if (!validate_binary(line)) // Make sure line is a valid 16 bit binary string
-        {
-            printf("Line entered did not contain a 16 bit binary string.\n");
-            continue;
-        }
+		if (line[strlen(line) - 1] == '\n') // Removes new line character
+			line[strlen(line) - 1] = '\0';
 
-        memcpy(op, &line, 4); // Gets opcode
-        op[4] = '\0';
-        strcpy(memory[memIndex], line); // Stores line in memory
-        memIndex++;
-    }
+		if (!strcmp(line, "stop"))
+		{
+			printf("Finished taking input...\n");
+			stop = 1;
+			break;
+		}
 
-    memIndex = 2048;
-    printf("\nPlease enter the program data as 16 bit binary strings, when finished type 'run':\n\n");
+		if (!validate_binary(line) && strcmp(line, "stop")) // Make sure line is a valid 16 bit binary string
+		{
+			printf("Line entered did not contain a 16 bit binary string.\n");
+			continue;
+		}
 
-    while (strcmp(line, "run")) // Stores strings as data until 'run' is entered
-    {
-        fgets(line, sizeof(line), stdin);
+		op = get_opcode(line);
+		opInt = atoi(op);
+		strcpy(memory[memIndex], line); // Stores line in memory
+		memIndex++;
+	}
 
-        if (line[strlen(line) - 1] == '\n') // Removes new line character
-            line[strlen(line) - 1] = '\0';
+	if (!stop)
+	{
+		memIndex = 2048;
+		printf("\nPlease enter the program data as 16 bit binary strings, when finished type 'run':\n\n");
 
-        if (!validate_binary(line)) // Make sure line is a valid 16 bit binary string
-        {
-            printf("Line entered did not contain a 16 bit binary string.\n");
-            continue;
-        }
+		while (strcmp(line, "run")) // Stores strings as data until 'run' is entered
+		{
+			fgets(line, sizeof(line), stdin);
 
-        strcpy(memory[memIndex], line); // Stores line in memory
-        memIndex++;
-    }
-    printf("Your program is being executed...\n\n");
+			if (line[strlen(line) - 1] == '\n') // Removes new line character
+				line[strlen(line) - 1] = '\0';
+
+			if (!strcmp(line, "run"))
+				break;
+
+			if (!validate_binary(line) && strcmp(line, "run")) // Make sure line is a valid 16 bit binary string
+			{
+				printf("Line entered did not contain a 16 bit binary string.\n");
+				continue;
+			}
+
+			strcpy(memory[memIndex], line); // Stores line in memory
+			memIndex++;
+		}
+	}
+	printf("Your program is being executed...\n\n");
 }
 
 /*
-	Loads default program into memory
+Loads default program into memory
 */
 void load_defaults()
 {
-    strcpy(memory[0], "0001100000000000");
-    strcpy(memory[1], "0011100000000001");
-    strcpy(memory[2], "0010100000000010");
-    strcpy(memory[3], "0000000000000000");
-    strcpy(memory[2048], "0000000000000110");
-    strcpy(memory[2049], "0000000000000101");
+	clear_memory();
+	strcpy(memory[0], "0001100000000000");
+	strcpy(memory[1], "0011100000000001");
+	strcpy(memory[2], "0010100000000010");
+	strcpy(memory[3], "0000000000000000");
+	strcpy(memory[2048], "0000000000110111");
+	strcpy(memory[2049], "0000000110000101");
+}
+
+/*
+Returns opcode (first 4 digits) of single binary instruction
+*/
+char* get_opcode(char* instruction)
+{
+	char* opcode = malloc(sizeof(char));
+	memcpy(opcode, instruction, 4);
+	opcode[4] = '\0';
+	return opcode;
 }
 
 /*
@@ -222,11 +243,18 @@ void clear_memory()
 */
 void display_memory()
 {
-    for (int i = 0; i < MEM_SIZE; i++)
-    {
-        if (memory[i][0] != '\0')
-            printf("Memory address (hex): 0x%04x\tMemory Contents (bin): %s\n", i, memory[i]);
-    }
+	int memSize = 0;
+
+	for (int i = 0; i < MEM_SIZE; i++)
+	{
+		if (memory[i][0] != '\0')
+		{
+			memSize++;
+			printf("Memory address (hex): 0x%04x\tMemory Contents (bin): %s\n", i, memory[i]);
+		}
+	}
+
+	printf("Memory Used: %d bytes\n", memSize * 2);
 }
 
 /*
