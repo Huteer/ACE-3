@@ -1,21 +1,32 @@
 # stuff to go here to show we done the work :D
 1 a) + b)
 Opcode	Description
-Binary	Mnemonic	
+Binary	Mnemonic
+
 0000	Halt	Terminate the program.
 
 0001	Load X	Load the contents of address X into AC.
 
-0010	Store X	Store the contents of AC to address X.\n
-0011	Add X	Add the contents of address X to AC and store the result in AC.\n
-0100	Subt X	Subtract the contents of address X from AC and store the result in AC.\n
-0101	Input	Input a value from the keyboard into AC.\n
-0110	Output	Output the value in AC to the display\n
-0111	Skipcond	Skip the next instruction on condition.\n
-1000	Jump X	Load the value of X into PC.\n
-1001	LDC X	Load the value of X into AC.\n
-1010	SHIFTR X	Load the contents of address X into AC and shift right by 1.\n
-1011	SHIFTL X	Load the contents of address X into AC and shift left by 1.\n
+0010	Store X	Store the contents of AC to address X.
+
+0011	Add X	Add the contents of address X to AC and store the result in AC.
+
+0100	Subt X	Subtract the contents of address X from AC and store the result in AC.
+
+0101	Input	Input a value from the keyboard into AC.
+
+0110	Output	Output the value in AC to the display
+
+0111	Skipcond	Skip the next instruction on condition.
+
+1000	Jump X	Load the value of X into PC.
+
+1001	LDC X	Load the value of X into AC.
+
+1010	SHIFTR X	Load the contents of address X into AC and shift right by 1.
+
+1011	SHIFTL X	Load the contents of address X into AC and shift left by 1.
+
 
 c) skip if the AC is equal to 0
 
