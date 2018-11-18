@@ -4,6 +4,7 @@ Opcode	Description
 Binary	Mnemonic
 
 0000	Halt:	Terminate the program.
+
 0001	Load X:	Load the contents of address X into AC.
 
 0010	Store X:	Store the contents of AC to address X.
