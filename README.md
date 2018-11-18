@@ -2,8 +2,10 @@
 1 a) + b)
 Opcode	Description
 Binary	Mnemonic	
-0000	Halt	Terminate the program.\n
-0001	Load X	Load the contents of address X into AC.\n
+0000	Halt	Terminate the program.
+
+0001	Load X	Load the contents of address X into AC.
+
 0010	Store X	Store the contents of AC to address X.\n
 0011	Add X	Add the contents of address X to AC and store the result in AC.\n
 0100	Subt X	Subtract the contents of address X from AC and store the result in AC.\n
