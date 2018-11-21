@@ -1,63 +1,61 @@
 //Code for the fetch execute cylce:
-
-short AC = 0,IR = 0,MBR = 0,PC = 0,MAR = 0;
 int fetchExecute();
 
 
-int fetchExecute ()
+int fetchExecute(struct ref *r)
 {
-	AC = 0;
-	PC = 0;
-	opCode = 1;
+	int opCode = 1;
 	
-while(opCode != 0)
+	while(opCode != 0)
 	{
 		char temp[1][17] = {0};
-		short opCode = getOpcode(memory[PC][WORD_SIZE + 1]);
-		IR = memory[PC];
-		MBR = getOperand(memory[PC][WORD_SIZE + 1];
+		short opCode = get_opcode(memory[r->pc][WORD_SIZE + 1]);
+		r->ir = memory[r->pc];
+		r->mar = r->mbr << 4;
+		r->mbr = getOperand(memory[r->pc][WORD_SIZE + 1]);
 		
 		switch(opCode)
 		{
 		case 1://LoadX
-			temp[1][WORD_SIZE + 1] = memory[MBR][WORD_SIZE + 1]
-			AC = binToDec(temp[1][WORD_SIZE +1]
+			temp[1][WORD_SIZE + 1] = memory[r->mbr][WORD_SIZE + 1];
+			r->ac = binToDec(temp[1][WORD_SIZE +1]);
 			break;
-		case 2;//StoreX
-			memory[MBR][WORD_SIZE +1] = dectoBin(AC);
+		case 2://StoreX
+			memory[r->mbr][WORD_SIZE +1] = dectoBin(r->ac);
 			break;
 		case 3://AddX
-			AC = AC + MBR;
+			r->ac = r->ac + r->mbr;
 			break;
-		case 4;//SubX
-			AC = AC - MBR;
+		case 4://SubX
+			r->ac = r->ac - r->mbr;
 			break;
 		case 5://Input
 			read_console();
 			break;
-		case 6;//Output
-			printf("%d is the current value in the Accumulator", &AC);
+		case 6://Output
+			printf("%d is the current value in the Accumulator", &r->ac);
 			break;
 		case 7://SkipCond
-			if (AC == 0)
+			if (r->ac == 0)
 			{
-			break;
+				r->pc ++;				
 			}
-		case 8;//Jump
-			PC = MBR;
+			break;
+		case 8://Jump
+			r->pc = r->mar;
 			break;
 		case 9://LDC
-			AC = MBR;
+			r->ac = r->mar;
 			break;
-		case 10;//ShiftR
-			AC = AC/2
+		case 10://ShiftR
+			r->ac = r->ac/2;
 			break;
-		case 11;//ShiftL
-			AC = AC*2;
+		case 11://ShiftL
+			r->ac = r->ac*2;
 			break;
-		default;
+		default:
 			break;
 		}
-		PC++;
+		r->pc++;
 	}
 }
